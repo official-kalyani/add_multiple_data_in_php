@@ -1,23 +1,28 @@
 <?php
   require_once('db.php');
   $upload_dir = 'uploads/';
- $sql = "select * from auro_emp order by auro_id  desc limit 1";
- $result = mysqli_query($conn, $sql);
- $row = mysqli_fetch_array($result);
-  $lastid = $row['auro_id'];
- if ($lastid == '') {
+$sql = "select auro_id from auro_emp order by auro_id  desc ";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_array($result);
+$lastid = $row['auro_id'];
+// echo $lastid;
+if ($lastid == '') {
  	$empid = "STDAA001";
- }else{
- 	$empid = substr($lastid, 7);
- 	$empid = intval($empid);
- 	
- 	if ($empid < 10) {
- 		$empid = "STDAA00".($empid+1);
- 	}else{
- 		$empid = "STDAA".($empid+1);
- 	}
- 	
- }
+}else{
+	// $empid = substr($lastid, 7);
+	// $empid = intval($empid);
+	
+	// if ($empid < 10) {
+	// 	$empid = "STDAA00".($empid+1);
+	// }else{
+	// 	$empid = "STDAA".($empid+1);
+	// }
+	$idd = str_replace("STDAA", "", $lastid);
+	$id = str_pad($idd+1, 3,0,STR_PAD_LEFT);
+	
+	$empid = "STDAA".$id;
+	
+}
 
   if (isset($_POST['Submit'])) {
   	// echo '<pre>';print_r($_POST);echo count($_POST['auro_education']);exit();
@@ -67,8 +72,9 @@
 		// echo $userPic;exit();
 			$sql = "insert into auro_emp(auro_id ,auro_name,auro_email ,auro_address,auro_phone, auro_image)
 					values('".$auro_id."','".$auro_name."', '".$auro_email."', '".$auro_address."','".$auro_phone."', '".$userPic."')";
-					// echo $sql;
+					// echo $sql;exit();
 			$result = mysqli_query($conn, $sql);
+			
 			if($auro_ed_count > 0 ){
 				// echo '<pre>';print_r($_POST);exit();
 		        for($i = 0; $i < $auro_ed_count; $i++){
